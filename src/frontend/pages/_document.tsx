@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react'
-import Document, { Head, Main, NextScript } from 'next/document'
+import Document, { Head, Html, Main, NextScript } from 'next/document'
 import ServerStyleSheets from '@material-ui/styles/ServerStyleSheets'
 
 import theme from '../themes/theme'
@@ -7,23 +7,17 @@ import theme from '../themes/theme'
 class MyDocument extends Document {
   render(): ReactElement {
     return (
-      <html lang={'en'} dir={'ltr'}>
+      <Html>
         <Head>
           <meta charSet={'utf-8'} />
-          {/* <meta name={'description'} content={''} /> */}
           <meta name={'theme-color'} content={theme.palette.primary.main} />
-          {/* <meta property={'og:title'} content={''} /> */}
           <meta property={'og:type'} content={'website'} />
-          {/* <meta property={'og:url'} content={''} /> */}
-          {/* <meta property={'og:description'} content={''} /> */}
-          {/* <meta property={'og:image'} content={''} /> */}
-          {/* <link rel={'icon'} type={'image/x-icon'} href={''} /> */}
         </Head>
         <body>
           <Main />
           <NextScript />
         </body>
-      </html>
+      </Html>
     )
   }
 }
