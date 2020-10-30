@@ -1,0 +1,13 @@
+type Test {
+  id: ID!
+  message: String!
+}
+
+extend type Query {
+  test(id: ID!): Test
+  tests: [Test]
+}
+
+extend type Mutation {
+  test_mutation(id: ID!, message: String!): Test
+}

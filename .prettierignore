@@ -1,0 +1,12 @@
+# Ignore artifacts:
+build
+coverage
+
+*.json
+*.yaml
+Dockerfile
+.env
+.env.example
+*.md
+
+.next

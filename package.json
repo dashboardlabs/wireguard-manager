@@ -1,0 +1,64 @@
+{
+  "name": "wireguard-manager",
+  "version": "1.0.0",
+  "description": "A simple web-based WireGuard VPN manager",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "build": "rm -rf dist && next build src/frontend && tsc --build tsconfig.json && copyfiles -u 1 **/*.graphql dist && copyfiles -u 1 **/*.pdf dist && copyfiles -u 1 **/*.ttf dist && copyfiles -u 1 **/*.png dist",
+    "start": "NODE_ENV=production node dist/index.js",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix && prettier --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phillytan/wireguard-manager.git"
+  },
+  "keywords": [],
+  "author": "Philly Tan <philly@phillytan.xyz>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/phillytan/wireguard-manager/issues"
+  },
+  "homepage": "https://github.com/phillytan/wireguard-manager#readme",
+  "devDependencies": {
+    "@types/compression": "^1.7.0",
+    "@types/express": "^4.17.8",
+    "@types/helmet": "^4.0.0",
+    "@types/jsonwebtoken": "^8.5.0",
+    "@types/node": "^14.0.9",
+    "@typescript-eslint/eslint-plugin": "^4.6.0",
+    "@typescript-eslint/parser": "^4.6.0",
+    "eslint": "^7.1.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-react": "^7.20.5",
+    "nodemon": "^2.0.4",
+    "prettier": "^2.1.2",
+    "ts-node": "^9.0.0"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.2.5",
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.56",
+    "@material-ui/styles": "^4.10.0",
+    "@types/classnames": "^2.2.10",
+    "@types/js-cookie": "^2.2.6",
+    "@types/react": "^16.9.44",
+    "apollo-server-express": "^2.14.2",
+    "classnames": "^2.2.6",
+    "compression": "^1.7.4",
+    "copyfiles": "^2.3.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "graphql": "^15.4.0",
+    "graphql-import-node": "0.0.4",
+    "helmet": "^4.1.1",
+    "js-cookie": "^2.2.1",
+    "jsonwebtoken": "^8.5.1",
+    "next": "^10.0.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "typescript": "^4.0.5"
+  }
+}
