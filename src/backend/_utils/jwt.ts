@@ -1,28 +1,11 @@
 import jwt from 'jsonwebtoken'
+import axios from 'axios'
 
-const secret = process.env.JWT_SECRET || 'The quick brown fox jumps over the lazy dog.'
-
-const jwtOptions = {
-  expiresIn: '2h'
-}
-
-export const generateJWT = (id: string): string => {
-  return jwt.sign({ id }, secret, jwtOptions)
-}
-
-export const verifyJWT = (
-  token: string
-): {
-  id: string
-  iat: number
-  exp: number
-} => {
+export const verifyJWT = async (token: string): Promise<string> => {
+  const { data } = await axios.get(`${process.env.CF_ACCESS_URI}/cdn-cgi/access/certs`)
+  const secret = data?.public_cert?.cert?.replace('\\n', '')
   try {
-    return jwt.verify(token, secret) as {
-      id: string
-      iat: number
-      exp: number
-    }
+    return (jwt.verify(token, secret) as { email: string }).email
   } catch {
     return
   }

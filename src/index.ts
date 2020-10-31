@@ -61,7 +61,7 @@ nextJSApp.prepare().then(() => {
 
       return {
         ip,
-        currentUserId: verifyJWT(headers.accesstoken)?.id
+        currentUserEmail: await verifyJWT(headers.accesstoken)
       }
     },
     formatError: (error: GraphQLError): GraphQLFormattedError => {
