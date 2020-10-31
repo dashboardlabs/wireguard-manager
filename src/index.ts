@@ -11,8 +11,11 @@ import next from 'next'
 import { parse } from 'url'
 
 import { resolvers, typeDefs } from './backend/controllers'
-import { Context } from './_types/context'
+import { Context } from './backend/_types/context'
 import { verifyJWT } from './backend/_utils/jwt'
+import { Db, MongoClient } from 'mongodb'
+import { User } from 'backend/_types/users'
+import { Key } from 'backend/_types/keys'
 
 const app = express()
 app.set('trust proxy', true)
@@ -22,6 +25,8 @@ app.use(compression())
 const dev = process.env.NODE_ENV !== 'production'
 const nextJSApp = next({ dir: './src/frontend', dev })
 const handle = nextJSApp.getRequestHandler()
+
+const mongoUri: string = process.env.DB_URI || 'mongodb://localhost/dashlabs'
 
 const scriptSrc = [
   "'self'",
@@ -51,7 +56,28 @@ if (process.env.NODE_ENV) {
   )
 }
 
-nextJSApp.prepare().then(() => {
+nextJSApp.prepare().then(async () => {
+
+  const mongoClient: MongoClient = await MongoClient.connect(mongoUri, { useUnifiedTopology: true })
+  const db: Db = mongoClient.db('access')
+
+  const database = {
+    users: db.collection<User>('users'),
+    keys: db.collection<Key>('keys')
+  }
+
+  database.users.dropIndexes()
+  database.keys.dropIndexes()
+
+  database.users.createIndex({
+    email: 'text',
+    unique: 1
+  })
+
+  database.keys.createIndex({
+    userId: 1
+  })
+
   const server = new ApolloServer({
     typeDefs,
     resolvers,
@@ -61,6 +87,7 @@ nextJSApp.prepare().then(() => {
 
       return {
         ip,
+        database,
         currentUserEmail: await verifyJWT(headers.accesstoken)
       }
     },

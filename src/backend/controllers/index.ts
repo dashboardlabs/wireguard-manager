@@ -1,4 +1,5 @@
-import sample from './sample'
+import users from './users'
+import keys from './keys'
 import { gql } from 'apollo-server-express'
 
 const emptyDefs = gql`
@@ -6,6 +7,6 @@ const emptyDefs = gql`
   type Mutation
 `
 
-export const resolvers = [sample.resolvers]
+export const resolvers = [users.resolvers, keys.resolvers]
 
-export const typeDefs = [emptyDefs, sample.typeDefs]
+export const typeDefs = [emptyDefs, users.typeDefs, keys.typeDefs]

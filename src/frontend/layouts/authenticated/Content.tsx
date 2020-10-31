@@ -15,9 +15,9 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import DownloadIcon from '@material-ui/icons/CloudDownloadTwoTone'
 
 import Avatar from '@material-ui/core/Avatar'
-// import md5 from 'js-md5'
+import md5 from 'js-md5'
 
-// import { User } from '../../_types/user'
+import { User } from '../../_types/users'
 // import removeAccessToken from 'frontend/_utils/removeAccessToken'
 
 const useStyles = makeStyles((theme) => ({
@@ -26,27 +26,25 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.secondary.dark
   }
 }))
-// { user }: { user: User }
-const Content = (): ReactElement => {
+
+const Content = ({ user }: { user: User }): ReactElement => {
   const classes = useStyles({})
   const router = useRouter()
-  // const user: any = null
 
   return (
     <List dense>
-      {/* <Collapse in={Boolean(user)}>
+      <Collapse in={Boolean(user)}>
         <ListItem
           button
-          selected={router.pathname.includes('/account')}
         >
           <ListItemAvatar>
             <Avatar className={classes.avatar} variant={'rounded'} src={`https://www.gravatar.com/avatar/${md5(user?.email?.toLowerCase()?.trim())}?s=128&d=404`}>
-              {`${user?.name[0]}`}
+              {`${user?.name?.[0] || user?.email?.[0] || '?'}`}
             </Avatar>
           </ListItemAvatar>
           <ListItemText primary={user?.name} secondary={user?.email} />
         </ListItem>
-      </Collapse> */}
+      </Collapse>
       <ListItem
         button
         onClick={(): void => {

@@ -1,0 +1,15 @@
+type Key {
+  _id: ID!
+  deviceName: String!
+  publicKey: String!
+  user: User!
+  userId: ID!
+}
+
+extend type Query {
+  current_user_keys: [Key]!
+}
+
+extend type Mutation {
+  create_key(deviceName: String!): Key
+}

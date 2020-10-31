@@ -1,0 +1,15 @@
+type User {
+  _id: ID!
+  email: String!
+  name: String
+  superuser: Boolean!
+  keys: [Key]!
+}
+
+extend type Query {
+  current_user: User
+}
+
+# extend type Mutation {
+#   test_mutation(id: ID!, message: String!): Test
+# }

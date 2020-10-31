@@ -2,11 +2,9 @@ import { gql } from '@apollo/client'
 
 export default gql`
   query {
-    user: current_user {
+    keys: current_user_keys {
       _id
-      name
-      email
-      superuser
+      deviceName
     }
   }
 `

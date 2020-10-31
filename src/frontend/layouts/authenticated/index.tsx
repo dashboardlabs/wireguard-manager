@@ -8,7 +8,7 @@ import classnames from 'classnames'
 import { useRouter } from 'next/router'
 import drawerWidth from './_drawerWidth'
 
-// import { useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import query from './query'
 
 const useStyles = makeStyles((theme) => ({
@@ -80,8 +80,8 @@ const authenticated = (Page: FunctionComponent, options?: Options) => ():
   const theme = useTheme()
   const breakpoint = useMediaQuery(theme.breakpoints.up('md'))
 
-  // const { data, loading } = useQuery(query)
-  // const user = data?.user
+  const { data, loading } = useQuery(query)
+  const user = data?.user
 
   const [open, setOpen] = useState(false)
 
@@ -99,9 +99,9 @@ const authenticated = (Page: FunctionComponent, options?: Options) => ():
     widthClass = classnames(classes.root, classes.wide)
   }
 
-  // if (loading || !user) {
-  //   return null
-  // }
+  if (loading || !user) {
+    return null
+  }
 
   return (
     <>
@@ -122,7 +122,7 @@ const authenticated = (Page: FunctionComponent, options?: Options) => ():
           setOpen(false)
         }}
         permanent={!options?.wide && !options?.narrow && breakpoint}
-        // user={user}
+        user={user}
       />
     </>
   )
