@@ -53,6 +53,10 @@ const DevicesAddModal = (): ReactElement => {
                 fragment NewKey on Key {
                   _id
                   deviceName
+                  info {
+                    ip
+                    time
+                  }
                 }
               `
             })
@@ -72,6 +76,12 @@ const DevicesAddModal = (): ReactElement => {
               <StyledTableCell>
                   Device Name
               </StyledTableCell>
+              <StyledTableCell>
+                  Last Connected IP Address
+              </StyledTableCell>
+              <StyledTableCell>
+                  Last Connected Time
+              </StyledTableCell>
               <StyledTableCell align="right">
                   Delete Device Access
               </StyledTableCell>
@@ -82,6 +92,12 @@ const DevicesAddModal = (): ReactElement => {
               <TableRow key={String(key?._id)}>
                 <TableCell>
                   {key?.deviceName}
+                </TableCell>
+                <TableCell>
+                  {key?.info?.ip}
+                </TableCell>
+                <TableCell>
+                  {key?.info?.time === 0 ? 'Never' : (new Date(key?.info?.time * 1000)).toString()}
                 </TableCell>
                 <TableCell align="right">
                   <Button

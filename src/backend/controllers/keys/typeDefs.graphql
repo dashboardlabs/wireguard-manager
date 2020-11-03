@@ -5,6 +5,12 @@ type Key {
   user: User!
   userId: ID!
   config: String
+  info: PeerInfo
+}
+
+type PeerInfo {
+  ip: String
+  time: Int
 }
 
 extend type Query {

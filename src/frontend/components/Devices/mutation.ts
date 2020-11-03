@@ -6,6 +6,10 @@ export default gql`
         _id
         deviceName
         config
+        info {
+          ip
+          time
+        }
     }
   }
 `

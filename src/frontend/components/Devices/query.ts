@@ -5,6 +5,10 @@ export default gql`
     keys: current_user_keys {
       _id
       deviceName
+      info {
+        ip
+        time
+      }
     }
   }
 `
