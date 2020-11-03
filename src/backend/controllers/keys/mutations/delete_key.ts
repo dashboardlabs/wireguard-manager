@@ -33,13 +33,14 @@ export default async (_root: undefined, args: { _id: string }, context: Context)
   })
 
   await context.database.keys.findOneAndUpdate({
-    _id: new ObjectId(args._id)
+    _id: key._id
   }, {
-    deviceName: '',
-    publicKey: '',
-    ip: key.ip,
-    userId: null,
-    isDeleted: true
+    $set: {
+      deviceName: '',
+      publicKey: '',
+      userId: null,
+      isDeleted: true
+    }
   })
 
   return key
