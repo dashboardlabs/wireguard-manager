@@ -4,6 +4,7 @@ type Key {
   publicKey: String!
   user: User!
   userId: ID!
+  config: String
 }
 
 extend type Query {

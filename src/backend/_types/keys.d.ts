@@ -7,4 +7,6 @@ export interface Key {
   publicKey: string
   user?: User
   userId: ObjectId
+  ip: string
+  config?: string
 }

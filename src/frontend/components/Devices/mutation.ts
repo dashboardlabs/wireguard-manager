@@ -5,6 +5,7 @@ export default gql`
     keys: create_key(deviceName: $deviceName) {
         _id
         deviceName
+        config
     }
   }
 `

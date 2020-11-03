@@ -1,6 +1,7 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useState } from 'react'
 import { Button, Collapse, TextField, Typography } from '@material-ui/core'
-import { TableContainer, Paper, Table, TableHead, TableRow, TableBody, TableCell, createStyles, makeStyles, Theme, withStyles } from '@material-ui/core'
+import { TableContainer, Paper, Table, TableHead, TableRow, TableBody, TableCell, createStyles, makeStyles, Theme, withStyles, } from '@material-ui/core'
+import { Alert, AlertTitle } from '@material-ui/lab';
 import PlusIcon from '@material-ui/icons/AddTwoTone'
 import DownloadIcon from '@material-ui/icons/CloudDownloadTwoTone'
 import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
@@ -9,6 +10,7 @@ import mutation from './mutation'
 import { useMutation, gql, useQuery } from '@apollo/client'
 import query from './query'
 import { Key } from 'frontend/_types/keys'
+import QRCode from 'react-qr-code'
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
@@ -36,11 +38,11 @@ const DevicesAddModal = (): ReactElement => {
   const { data } = useQuery(query)
   const keys: Key[] = data?.keys
   console.log(data)
-  const [ name, setName ] = React.useState('')
-  const [ openModal, setOpenModal ] = React.useState(false)
-  const [ step, setStep ] = React.useState(0)
+  const [ name, setName ] = useState('')
+  const [ openModal, setOpenModal ] = useState(false)
+  const [ step, setStep ] = useState(0)
 
-  const [addDevice, { loading }] = useMutation(mutation, {
+  const [addDevice, addDeviceStatus] = useMutation(mutation, {
     update(cache, { data: { keys } }) {
       cache.modify({
         fields: {
@@ -159,19 +161,40 @@ const DevicesAddModal = (): ReactElement => {
                 </Button>
               </form>
             </Collapse>
-            <Collapse in={step === 1 && !loading}>
+            <Collapse in={step === 1 && !addDeviceStatus.loading}>
+              <Alert severity="warning">
+                <AlertTitle>WARNING</AlertTitle>
+                For security reasons, this page will only be showed once.
+              </Alert>
+              <br />
+              <Alert severity="info">
+                <AlertTitle>Note:</AlertTitle>
+                This WireGuard configuration can only be used on <b>{name}</b> and no other devices. To connect another device, please add another device.
+              </Alert>
+              <br />
               <Typography color={'textPrimary'} variant={'h6'}>
                 {'For Computers - Download VPN Configuration'}
               </Typography>
               <br />
               Please download this configuration file and import it to the WireGuard application in {name}.
               <br />
+              <pre>
+                {addDeviceStatus?.data?.keys?.config}
+              </pre>
               <br />
               <Button
                 variant="contained"
                 color="primary"
                 fullWidth
                 startIcon={<DownloadIcon />}
+                onClick={() => {
+                  const element = document.createElement("a");
+                  const file = new Blob([addDeviceStatus?.data?.keys?.config || ''], {type: 'text/plain'});
+                  element.href = URL.createObjectURL(file);
+                  element.download = "vpn.conf";
+                  document.body.appendChild(element);
+                  element.click();
+                }}
               >
                 Download WireGuard Configuration
               </Button>
@@ -184,10 +207,7 @@ const DevicesAddModal = (): ReactElement => {
               On {name}, please use the WireGuard application to scan this QR Code.
               <br />
               <br />
-              Image goes here.
-              <br />
-              <br />
-              <b>NOTE:</b> this WireGuard configuration can only be used on {name} and no other devices. To connect another device, please add another device.
+              <QRCode value={addDeviceStatus?.data?.keys?.config || ''} />
             </Collapse>
           </>
         }
