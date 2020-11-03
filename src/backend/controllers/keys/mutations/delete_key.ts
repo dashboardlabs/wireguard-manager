@@ -24,6 +24,14 @@ export default async (_root: undefined, args: { _id: string }, context: Context)
 
   exec(`wg set wg0 peer ${key.publicKey} remove`)
 
+  await context.database.users.findOneAndUpdate({
+    email: context.currentUserEmail
+  }, {
+    $pull: {
+      keys: key._id
+    }
+  })
+
   await context.database.keys.findOneAndUpdate({
     _id: new ObjectId(args._id)
   }, {
