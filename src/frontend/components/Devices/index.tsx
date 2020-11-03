@@ -11,7 +11,7 @@ import { useMutation, gql, useQuery } from '@apollo/client'
 import query from './query'
 import { Key } from 'frontend/_types/keys'
 
-const QRCode = require('react-qr-code')
+import { QRCode } from "react-qr-svg";
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
@@ -38,7 +38,6 @@ const DevicesAddModal = (): ReactElement => {
   const classes = useStyles()
   const { data } = useQuery(query)
   const keys: Key[] = data?.keys
-  console.log(data)
   const [ name, setName ] = useState('')
   const [ openModal, setOpenModal ] = useState(false)
   const [ step, setStep ] = useState(0)
@@ -224,7 +223,13 @@ const DevicesAddModal = (): ReactElement => {
               On {name}, please use the WireGuard application to scan this QR Code.
               <br />
               <br />
-              <QRCode value={addDeviceStatus?.data?.keys?.config || ''} />
+              <QRCode
+                bgColor='#FFFFFF'
+                fgColor='#222f3e'
+                level="Q"
+                style={{ width: 512 }}
+                value={addDeviceStatus?.data?.keys?.config || ''}
+            />
             </Collapse>
           </>
         }
