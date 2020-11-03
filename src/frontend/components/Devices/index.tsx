@@ -1,17 +1,18 @@
 import React, { ReactElement, useState } from 'react'
 import { Button, Collapse, TextField, Typography } from '@material-ui/core'
 import { TableContainer, Paper, Table, TableHead, TableRow, TableBody, TableCell, createStyles, makeStyles, Theme, withStyles, } from '@material-ui/core'
-import { Alert, AlertTitle } from '@material-ui/lab';
+import { Alert, AlertTitle } from '@material-ui/lab'
 import PlusIcon from '@material-ui/icons/AddTwoTone'
 import DownloadIcon from '@material-ui/icons/CloudDownloadTwoTone'
 import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
 import ModalContainer from '../ModalContainer'
-import mutation from './mutation'
+import addMutation from './addMutation'
+import deleteMutation from './deleteMutation'
 import { useMutation, gql, useQuery } from '@apollo/client'
 import query from './query'
 import { Key } from 'frontend/_types/keys'
 
-import { QRCode } from "react-qr-svg";
+import { QRCode } from 'react-qr-svg'
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
@@ -42,7 +43,7 @@ const DevicesAddModal = (): ReactElement => {
   const [ openModal, setOpenModal ] = useState(false)
   const [ step, setStep ] = useState(0)
 
-  const [addDevice, addDeviceStatus] = useMutation(mutation, {
+  const [addDevice, addDeviceStatus] = useMutation(addMutation, {
     update(cache, { data: { keys } }) {
       cache.modify({
         fields: {
@@ -65,6 +66,31 @@ const DevicesAddModal = (): ReactElement => {
         }
       })
     }
+  })
+
+  const [deleteDevice] = useMutation(deleteMutation, {
+    // update(cache, { data: { keys } }) {
+    //   cache.modify({
+    //     fields: {
+    //       current_user_keys(existingKeys = []) {
+    //         const newKeyRef = cache.writeFragment({
+    //           data: keys,
+    //           fragment: gql`
+    //             fragment NewKey on Key {
+    //               _id
+    //               deviceName
+    //               info {
+    //                 ip
+    //                 time
+    //               }
+    //             }
+    //           `
+    //         })
+    //         return [...existingKeys, newKeyRef]
+    //       }
+    //     }
+    //   })
+    // }
   })
 
   return (
@@ -105,7 +131,13 @@ const DevicesAddModal = (): ReactElement => {
                     color="secondary"
                     className={classes.button}
                     startIcon={<DeleteIcon />}
-                    disabled
+                    onClick={() => {
+                      deleteDevice({
+                        variables: {
+                          _id: key?._id
+                        }
+                      })
+                    }}
                   >
                     Delete
                   </Button>

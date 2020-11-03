@@ -1,11 +1,11 @@
 import { AuthenticationError } from 'apollo-server-express'
 import { Context } from 'backend/_types/context'
 import { Key } from 'backend/_types/keys'
-import findIPAddress from '../../../_utils/findIPAddress';
+import findIPAddress from '../../../_utils/findIPAddress'
 import { ObjectId } from 'mongodb'
 import { exec } from 'child_process'
 
-const { Wg } = require('wireguard-wrapper');
+const { Wg } = require('wireguard-wrapper')
 
 export default async (_root: undefined, args: { deviceName: string }, context: Context): Promise<Key> => {
 
@@ -14,7 +14,7 @@ export default async (_root: undefined, args: { deviceName: string }, context: C
   }
 
   const interfaces = await Wg.show('wg0')
-  
+
   const offset = await context.database.keys.count({})
 
   const ip = findIPAddress(offset)
@@ -24,14 +24,14 @@ export default async (_root: undefined, args: { deviceName: string }, context: C
   exec(`wg set wg0 peer ${publicKey} allowed-ips ${ip}`)
 
   const config = `
-    [Interface]\n
-    Address = ${ip}\n
-    PrivateKey = ${privateKey}\n
-    DNS = 1.1.1.2, 1.0.0.2, 2606:4700:4700::1112, 2606:4700:4700::1002\n
-    \n
-    [Peer]\n
-    PublicKey = ${interfaces.wg0._publicKey}\n
-    AllowedIPs = 0.0.0.0/0, ::/0\n
+    [Interface]
+    Address = ${ip}
+    PrivateKey = ${privateKey}
+    DNS = 1.1.1.2, 1.0.0.2, 2606:4700:4700::1112, 2606:4700:4700::1002
+    
+    [Peer]
+    PublicKey = ${interfaces.wg0._publicKey}
+    AllowedIPs = 0.0.0.0/0, ::/0
     Endpoint = ${process.env.WIREGUARD_ENDPOINT}
   `
 
@@ -43,6 +43,7 @@ export default async (_root: undefined, args: { deviceName: string }, context: C
     deviceName: args.deviceName,
     publicKey,
     ip,
+    isDeleted: false,
     userId: new ObjectId(user._id)
   })
 

@@ -7,6 +7,7 @@ export interface Key {
   publicKey: string
   user?: User
   userId: ObjectId
+  isDeleted?: boolean
   ip: string
   config?: string
 }

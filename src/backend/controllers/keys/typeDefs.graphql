@@ -19,4 +19,5 @@ extend type Query {
 
 extend type Mutation {
   create_key(deviceName: String!): Key
+  delete_key(_id: ID!): Key
 }
