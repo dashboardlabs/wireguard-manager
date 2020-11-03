@@ -10,7 +10,8 @@ import mutation from './mutation'
 import { useMutation, gql, useQuery } from '@apollo/client'
 import query from './query'
 import { Key } from 'frontend/_types/keys'
-import QRCode from 'react-qr-code'
+
+const QRCode = require('react-qr-code')
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({

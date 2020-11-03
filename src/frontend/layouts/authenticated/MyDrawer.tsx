@@ -7,7 +7,7 @@ import Toolbar from '@material-ui/core/Toolbar'
 
 import Content from './Content'
 import drawerWidth from './_drawerWidth'
-import { User } from '../../_types/user'
+import { User } from '../../_types/users'
 
 const useStyles = makeStyles({
   width: {
