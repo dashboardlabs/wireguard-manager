@@ -1,6 +1,6 @@
 import React, { ReactElement, useState } from 'react'
 import { Button, Collapse, TextField, Typography } from '@material-ui/core'
-import { TableContainer, Paper, Table, TableHead, TableRow, TableBody, TableCell, createStyles, makeStyles, Theme, withStyles, } from '@material-ui/core'
+import { TableContainer, Paper, Table, TableHead, TableRow, TableBody, TableCell, createStyles, makeStyles, Theme, withStyles } from '@material-ui/core'
 import { Alert, AlertTitle } from '@material-ui/lab'
 import PlusIcon from '@material-ui/icons/AddTwoTone'
 import DownloadIcon from '@material-ui/icons/CloudDownloadTwoTone'
@@ -69,28 +69,29 @@ const DevicesAddModal = (): ReactElement => {
   })
 
   const [deleteDevice] = useMutation(deleteMutation, {
-    // update(cache, { data: { keys } }) {
-    //   cache.modify({
-    //     fields: {
-    //       current_user_keys(existingKeys = []) {
-    //         const newKeyRef = cache.writeFragment({
-    //           data: keys,
-    //           fragment: gql`
-    //             fragment NewKey on Key {
-    //               _id
-    //               deviceName
-    //               info {
-    //                 ip
-    //                 time
-    //               }
-    //             }
-    //           `
-    //         })
-    //         return [...existingKeys, newKeyRef]
-    //       }
-    //     }
-    //   })
-    // }
+    update(cache, { data: { keys } }) {
+      cache.modify({
+        fields: {
+          current_user_keys(existingKeys = []) {
+            const newKeyRef = cache.writeFragment({
+              data: keys,
+              id: cache.identify(keys),
+              fragment: gql`
+                fragment NewKey on Key {
+                  _id
+                  deviceName
+                  info {
+                    ip
+                    time
+                  }
+                }
+              `
+            })
+            return existingKeys?.filter((x: any): boolean => x?.__ref !== newKeyRef?.__ref)
+          }
+        }
+      })
+    }
   })
 
   return (
