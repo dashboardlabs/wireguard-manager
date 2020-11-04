@@ -2,7 +2,7 @@
 
 A simple WireGuard VPN Manager to generate, assign, and manage profiles to users.
 
-<img src="https://raw.githubusercontent.com/dashboardlabs/wireguard-manager/master/docs/img/screen.png" /> 
+<img src="https://github.com/dashboardlabs/wireguard-manager/blob/main/docs/img/screen.png?raw=true" /> 
 
 ## Requirements
 
