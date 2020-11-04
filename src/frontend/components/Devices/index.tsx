@@ -68,7 +68,7 @@ const DevicesAddModal = (): ReactElement => {
     }
   })
 
-  const [deleteDevice] = useMutation(deleteMutation, {
+  const [deleteDevice, deleteDeviceStatus] = useMutation(deleteMutation, {
     update(cache, { data: { keys } }) {
       cache.modify({
         fields: {
@@ -132,6 +132,7 @@ const DevicesAddModal = (): ReactElement => {
                     color="secondary"
                     className={classes.button}
                     startIcon={<DeleteIcon />}
+                    disabled={deleteDeviceStatus?.loading}
                     onClick={() => {
                       deleteDevice({
                         variables: {
