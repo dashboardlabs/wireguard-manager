@@ -15,12 +15,48 @@ export default async (_root: undefined, args: { deviceName: string }, context: C
 
   const interfaces = await Wg.show('wg0')
 
-  const offset = await context.database.keys.count({})
-
-  const ip = findIPAddress(offset)
-
   const privateKey = await Wg.genkey()
   const publicKey = await Wg.pubkey(privateKey)
+
+  const user = await context.database.users.findOne({
+    email: context.currentUserEmail
+  })
+  
+  const existingIP = await context.database.keys.findOne({
+    isDeleted: {
+      $eq: true
+    }
+  })
+
+  let ip: string
+
+  if (existingIP) {
+    ip = existingIP.ip
+    await context.database.keys.findOneAndUpdate({
+      isDeleted: {
+        $eq: true
+      },
+      ip
+    }, {
+      $set: {
+        deviceName: args.deviceName,
+        publicKey,
+        userId: new ObjectId(user._id),
+        isDeleted: false
+      }
+    })
+  } else {
+    const offset = await context.database.keys.count({})
+    ip = findIPAddress(offset)
+    await context.database.keys.insertOne({
+      deviceName: args.deviceName,
+      publicKey,
+      ip,
+      isDeleted: false,
+      userId: new ObjectId(user._id)
+    })
+  }
+  
   exec(`wg set wg0 peer ${publicKey} allowed-ips ${ip}`)
 
   const config = `
@@ -35,28 +71,21 @@ export default async (_root: undefined, args: { deviceName: string }, context: C
     Endpoint = ${process.env.WIREGUARD_ENDPOINT}
   `
 
-  const user = await context.database.users.findOne({
-    email: context.currentUserEmail
-  })
-
-  const createKeyResponse = await context.database.keys.insertOne({
-    deviceName: args.deviceName,
+  const key = await context.database.keys.findOne({
     publicKey,
-    ip,
-    isDeleted: false,
-    userId: new ObjectId(user._id)
+    ip
   })
 
   await context.database.users.findOneAndUpdate({
     email: context.currentUserEmail
   }, {
     $push: {
-      keys: createKeyResponse.insertedId
+      keys: key._id
     }
   })
 
   return {
-    ...(createKeyResponse.ops[0]),
+    ...key,
     config
   }
 }
