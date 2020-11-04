@@ -4,7 +4,7 @@ export interface Key {
   _id?: ObjectId
   deviceName: string
   info?: {
-    ip?: string,
+    ip?: string
     time?: number
   }
 }

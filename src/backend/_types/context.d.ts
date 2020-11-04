@@ -6,7 +6,7 @@ export interface Context {
   ip?: string | string[]
   currentUserEmail?: string
   database?: {
-    users: Collection<User>,
+    users: Collection<User>
     keys: Collection<Key>
   }
 }

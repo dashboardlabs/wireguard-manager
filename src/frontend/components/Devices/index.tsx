@@ -1,6 +1,18 @@
 import React, { ReactElement, useState } from 'react'
 import { Button, Collapse, TextField, Typography } from '@material-ui/core'
-import { TableContainer, Paper, Table, TableHead, TableRow, TableBody, TableCell, createStyles, makeStyles, Theme, withStyles } from '@material-ui/core'
+import {
+  TableContainer,
+  Paper,
+  Table,
+  TableHead,
+  TableRow,
+  TableBody,
+  TableCell,
+  createStyles,
+  makeStyles,
+  Theme,
+  withStyles
+} from '@material-ui/core'
 import { Alert, AlertTitle } from '@material-ui/lab'
 import PlusIcon from '@material-ui/icons/AddTwoTone'
 import DownloadIcon from '@material-ui/icons/CloudDownloadTwoTone'
@@ -39,9 +51,9 @@ const DevicesAddModal = (): ReactElement => {
   const classes = useStyles()
   const { data } = useQuery(query)
   const keys: Key[] = data?.keys
-  const [ name, setName ] = useState('')
-  const [ openModal, setOpenModal ] = useState(false)
-  const [ step, setStep ] = useState(0)
+  const [name, setName] = useState('')
+  const [openModal, setOpenModal] = useState(false)
+  const [step, setStep] = useState(0)
 
   const [addDevice, addDeviceStatus] = useMutation(addMutation, {
     update(cache, { data: { keys } }) {
@@ -100,36 +112,22 @@ const DevicesAddModal = (): ReactElement => {
         <Table>
           <TableHead>
             <TableRow>
-              <StyledTableCell>
-                  Device Name
-              </StyledTableCell>
-              <StyledTableCell>
-                  Last Connected IP Address
-              </StyledTableCell>
-              <StyledTableCell>
-                  Last Connected Time
-              </StyledTableCell>
-              <StyledTableCell align="right">
-                  Delete Device Access
-              </StyledTableCell>
+              <StyledTableCell>Device Name</StyledTableCell>
+              <StyledTableCell>Last Connected IP Address</StyledTableCell>
+              <StyledTableCell>Last Connected Time</StyledTableCell>
+              <StyledTableCell align='right'>Delete Device Access</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {keys?.map(key => (
+            {keys?.map((key) => (
               <TableRow key={String(key?._id)}>
-                <TableCell>
-                  {key?.deviceName}
-                </TableCell>
-                <TableCell>
-                  {key?.info?.ip}
-                </TableCell>
-                <TableCell>
-                  {key?.info?.time === 0 ? 'Never' : (new Date(key?.info?.time * 1000)).toString()}
-                </TableCell>
-                <TableCell align="right">
+                <TableCell>{key?.deviceName}</TableCell>
+                <TableCell>{key?.info?.ip}</TableCell>
+                <TableCell>{key?.info?.time === 0 ? 'Never' : new Date(key?.info?.time * 1000).toString()}</TableCell>
+                <TableCell align='right'>
                   <Button
-                    variant="contained"
-                    color="secondary"
+                    variant='contained'
+                    color='secondary'
                     className={classes.button}
                     startIcon={<DeleteIcon />}
                     disabled={deleteDeviceStatus?.loading}
@@ -151,8 +149,8 @@ const DevicesAddModal = (): ReactElement => {
       </TableContainer>
       <br />
       <Button
-        variant="contained"
-        color="primary"
+        variant='contained'
+        color='primary'
         fullWidth
         startIcon={<PlusIcon />}
         onClick={() => {
@@ -189,7 +187,7 @@ const DevicesAddModal = (): ReactElement => {
                   variant={'outlined'}
                   label={'Device Name'}
                   type={'text'}
-                  placeholder={'John\'s MacBook Pro'}
+                  placeholder={"John's MacBook Pro"}
                   onChange={(e): void => {
                     setName(e.target.value)
                   }}
@@ -200,9 +198,9 @@ const DevicesAddModal = (): ReactElement => {
                 <br />
                 <br />
                 <Button
-                  variant="contained"
-                  color="primary"
-                  type="submit"
+                  variant='contained'
+                  color='primary'
+                  type='submit'
                   disabled={name.length === 0}
                   fullWidth
                   startIcon={<PlusIcon />}
@@ -212,14 +210,15 @@ const DevicesAddModal = (): ReactElement => {
               </form>
             </Collapse>
             <Collapse in={step === 1 && !addDeviceStatus.loading}>
-              <Alert severity="warning">
+              <Alert severity='warning'>
                 <AlertTitle>WARNING</AlertTitle>
                 For security reasons, this page will only be showed once.
               </Alert>
               <br />
-              <Alert severity="info">
+              <Alert severity='info'>
                 <AlertTitle>Note:</AlertTitle>
-                This WireGuard configuration can only be used on <b>{name}</b> and no other devices. To connect another device, please add another device.
+                This WireGuard configuration can only be used on <b>{name}</b> and no other devices. To connect another
+                device, please add another device.
               </Alert>
               <br />
               <Typography color={'textPrimary'} variant={'h6'}>
@@ -228,22 +227,20 @@ const DevicesAddModal = (): ReactElement => {
               <br />
               Please download this configuration file and import it to the WireGuard application in {name}.
               <br />
-              <pre>
-                {addDeviceStatus?.data?.keys?.config}
-              </pre>
+              <pre>{addDeviceStatus?.data?.keys?.config}</pre>
               <br />
               <Button
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 fullWidth
                 startIcon={<DownloadIcon />}
                 onClick={() => {
-                  const element = document.createElement("a");
-                  const file = new Blob([addDeviceStatus?.data?.keys?.config || ''], {type: 'text/plain'});
-                  element.href = URL.createObjectURL(file);
-                  element.download = "vpn.conf";
-                  document.body.appendChild(element);
-                  element.click();
+                  const element = document.createElement('a')
+                  const file = new Blob([addDeviceStatus?.data?.keys?.config || ''], { type: 'text/plain' })
+                  element.href = URL.createObjectURL(file)
+                  element.download = 'vpn.conf'
+                  document.body.appendChild(element)
+                  element.click()
                 }}
               >
                 Download WireGuard Configuration
@@ -260,10 +257,10 @@ const DevicesAddModal = (): ReactElement => {
               <QRCode
                 bgColor='#FFFFFF'
                 fgColor='#222f3e'
-                level="Q"
+                level='Q'
                 style={{ width: 512 }}
                 value={addDeviceStatus?.data?.keys?.config || ''}
-            />
+              />
             </Collapse>
           </>
         }

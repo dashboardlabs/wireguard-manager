@@ -8,7 +8,6 @@ import { exec } from 'child_process'
 const { Wg } = require('wireguard-wrapper')
 
 export default async (_root: undefined, args: { deviceName: string }, context: Context): Promise<Key> => {
-
   if (!context.currentUserEmail) {
     throw new AuthenticationError('Unable to retrieve access token')
   }
@@ -21,7 +20,7 @@ export default async (_root: undefined, args: { deviceName: string }, context: C
   const user = await context.database.users.findOne({
     email: context.currentUserEmail
   })
-  
+
   const existingIP = await context.database.keys.findOne({
     isDeleted: {
       $eq: true
@@ -32,19 +31,22 @@ export default async (_root: undefined, args: { deviceName: string }, context: C
 
   if (existingIP) {
     ip = existingIP.ip
-    await context.database.keys.findOneAndUpdate({
-      isDeleted: {
-        $eq: true
+    await context.database.keys.findOneAndUpdate(
+      {
+        isDeleted: {
+          $eq: true
+        },
+        ip
       },
-      ip
-    }, {
-      $set: {
-        deviceName: args.deviceName,
-        publicKey,
-        userId: new ObjectId(user._id),
-        isDeleted: false
+      {
+        $set: {
+          deviceName: args.deviceName,
+          publicKey,
+          userId: new ObjectId(user._id),
+          isDeleted: false
+        }
       }
-    })
+    )
   } else {
     const offset = await context.database.keys.count({})
     ip = findIPAddress(offset)
@@ -56,7 +58,7 @@ export default async (_root: undefined, args: { deviceName: string }, context: C
       userId: new ObjectId(user._id)
     })
   }
-  
+
   exec(`wg set wg0 peer ${publicKey} allowed-ips ${ip}`)
 
   const config = `
@@ -76,13 +78,16 @@ export default async (_root: undefined, args: { deviceName: string }, context: C
     ip
   })
 
-  await context.database.users.findOneAndUpdate({
-    email: context.currentUserEmail
-  }, {
-    $push: {
-      keys: key._id
+  await context.database.users.findOneAndUpdate(
+    {
+      email: context.currentUserEmail
+    },
+    {
+      $push: {
+        keys: key._id
+      }
     }
-  })
+  )
 
   return {
     ...key,

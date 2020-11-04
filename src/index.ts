@@ -57,7 +57,6 @@ if (process.env.NODE_ENV) {
 }
 
 nextJSApp.prepare().then(async () => {
-
   const mongoClient: MongoClient = await MongoClient.connect(mongoUri, { useUnifiedTopology: true })
   const db: Db = mongoClient.db('access')
 

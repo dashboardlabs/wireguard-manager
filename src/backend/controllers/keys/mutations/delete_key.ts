@@ -5,7 +5,6 @@ import { ObjectId } from 'mongodb'
 import { exec } from 'child_process'
 
 export default async (_root: undefined, args: { _id: string }, context: Context): Promise<Key> => {
-
   if (!context.currentUserEmail) {
     throw new AuthenticationError('Unable to retrieve access token')
   }
@@ -24,24 +23,30 @@ export default async (_root: undefined, args: { _id: string }, context: Context)
 
   exec(`wg set wg0 peer ${key.publicKey} remove`)
 
-  await context.database.users.findOneAndUpdate({
-    email: context.currentUserEmail
-  }, {
-    $pull: {
-      keys: key._id
+  await context.database.users.findOneAndUpdate(
+    {
+      email: context.currentUserEmail
+    },
+    {
+      $pull: {
+        keys: key._id
+      }
     }
-  })
+  )
 
-  await context.database.keys.findOneAndUpdate({
-    _id: key._id
-  }, {
-    $set: {
-      deviceName: '',
-      publicKey: '',
-      userId: null,
-      isDeleted: true
+  await context.database.keys.findOneAndUpdate(
+    {
+      _id: key._id
+    },
+    {
+      $set: {
+        deviceName: '',
+        publicKey: '',
+        userId: null,
+        isDeleted: true
+      }
     }
-  })
+  )
 
   return key
 }

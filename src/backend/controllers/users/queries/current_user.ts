@@ -3,7 +3,6 @@ import { Context } from 'backend/_types/context'
 import { User } from 'backend/_types/users'
 
 export default async (_root: undefined, _args: null, context: Context): Promise<User> => {
-
   if (!context.currentUserEmail) {
     throw new AuthenticationError('Unable to retrieve access token')
   }

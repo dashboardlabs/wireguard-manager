@@ -16,7 +16,6 @@ import client from '../apollo/client'
 import Notification from '../components/Notification'
 
 class MyApp extends App {
-
   render(): ReactElement {
     const { Component, pageProps } = this.props
 

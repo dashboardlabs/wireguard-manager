@@ -23,16 +23,15 @@ const Home: NextPage = (): ReactElement => {
       <Typography color={'textPrimary'} variant={'h4'}>
         {'Download VPN Client'}
       </Typography>
-      This VPN service makes use of the <b><a href="https://www.wireguard.com/install">WireGuard</a></b> protocol. To connect to this VPN service, please download the official WireGuard Applications on your devices.
+      This VPN service makes use of the{' '}
+      <b>
+        <a href='https://www.wireguard.com/install'>WireGuard</a>
+      </b>{' '}
+      protocol. To connect to this VPN service, please download the official WireGuard Applications on your devices.
       <br />
       <br />
-      <a href="https://www.wireguard.com/install">
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          startIcon={<DownloadIcon />}
-        >
+      <a href='https://www.wireguard.com/install' style={{ textDecoration: 'none' }}>
+        <Button variant='contained' color='primary' fullWidth startIcon={<DownloadIcon />}>
           Download WireGuard
         </Button>
       </a>

@@ -34,11 +34,13 @@ const Content = ({ user }: { user: User }): ReactElement => {
   return (
     <List dense>
       <Collapse in={Boolean(user)}>
-        <ListItem
-          button
-        >
+        <ListItem button>
           <ListItemAvatar>
-            <Avatar className={classes.avatar} variant={'rounded'} src={`https://www.gravatar.com/avatar/${md5(user?.email?.toLowerCase()?.trim())}?s=128&d=404`}>
+            <Avatar
+              className={classes.avatar}
+              variant={'rounded'}
+              src={`https://www.gravatar.com/avatar/${md5(user?.email?.toLowerCase()?.trim())}?s=128&d=404`}
+            >
               {`${user?.name?.[0] || user?.email?.[0] || '?'}`}
             </Avatar>
           </ListItemAvatar>
