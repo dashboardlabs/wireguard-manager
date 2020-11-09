@@ -64,12 +64,12 @@ export default async (_root: undefined, args: { deviceName: string }, context: C
   const config = `
     [Interface]
     Address = ${ip}
+    ${(!process.env.ALLOWED_IPS || process.env.ALLOWED_IPS === '0.0.0.0/0, ::/0') && 'DNS = 1.1.1.2, 1.0.0.2, 2606:4700:4700::1112, 2606:4700:4700::1002'}
     PrivateKey = ${privateKey}
-    DNS = 1.1.1.2, 1.0.0.2, 2606:4700:4700::1112, 2606:4700:4700::1002
     
     [Peer]
     PublicKey = ${interfaces.wg0._publicKey}
-    AllowedIPs = 0.0.0.0/0, ::/0
+    AllowedIPs = ${process.env.ALLOWED_IPS ? process.env.ALLOWED_IPS : '0.0.0.0/0, ::/0'}
     Endpoint = ${process.env.WIREGUARD_ENDPOINT}
   `
 
