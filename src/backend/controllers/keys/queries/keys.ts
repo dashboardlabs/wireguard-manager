@@ -19,7 +19,7 @@ export default async (_root: undefined, _args: null, context: Context): Promise<
     .find({
       userId: user._id,
       isDeleted: {
-        $ne: false
+        $ne: true
       }
     })
     .toArray()
