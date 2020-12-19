@@ -17,7 +17,6 @@ export default async (_root: undefined, _args: null, context: Context): Promise<
 
   return await context.database.keys
     .find({
-      userId: user._id,
       isDeleted: {
         $ne: true
       }
