@@ -1,4 +1,7 @@
 import { Key } from 'backend/_types/keys'
+import { User } from 'backend/_types/users'
+import { Context } from 'backend/_types/context'
+import { ObjectId } from 'mongodb'
 
 const { Wg } = require('wireguard-wrapper')
 
@@ -11,6 +14,11 @@ export default {
         ip: peer?._endpoint?.split(':')[0],
         time: peer?._latestHandshake
       }
+    },
+    user: async (key: Key, _args: unknown, context: Context): Promise<User> => {
+      return await context.database.users.findOne({
+        _id: new ObjectId(key.userId)
+      })
     }
   }
 }

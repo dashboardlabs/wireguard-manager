@@ -13,6 +13,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import DownloadIcon from '@material-ui/icons/CloudDownloadTwoTone'
+import SettingsIcon from '@material-ui/icons/Settings'
 
 import Avatar from '@material-ui/core/Avatar'
 import md5 from 'js-md5'
@@ -47,6 +48,17 @@ const Content = ({ user }: { user: User }): ReactElement => {
           <ListItemText primary={user?.name} secondary={user?.email} />
         </ListItem>
       </Collapse>
+      <ListItem
+        button
+        onClick={(): void => {
+          router.push('/admin')
+        }}
+      >
+        <ListItemIcon>
+          <SettingsIcon />
+        </ListItemIcon>
+        <ListItemText primary={'Server Control'} secondary={'Administrator Controls'} />
+      </ListItem>
       <ListItem
         button
         onClick={(): void => {

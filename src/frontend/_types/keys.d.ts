@@ -7,4 +7,8 @@ export interface Key {
     ip?: string
     time?: number
   }
+  user?: {
+    name?: string
+    email?: string
+  }
 }

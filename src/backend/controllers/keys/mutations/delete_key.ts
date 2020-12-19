@@ -17,7 +17,7 @@ export default async (_root: undefined, args: { _id: string }, context: Context)
     _id: new ObjectId(args._id)
   })
 
-  if (!key.userId.equals(userId._id)) {
+  if (!(key.userId.equals(userId._id) || userId.superuser)) {
     throw new ForbiddenError('Access Denied')
   }
 
