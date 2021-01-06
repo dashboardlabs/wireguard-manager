@@ -47,7 +47,7 @@
     "@types/mongodb": "^3.5.32",
     "@types/react": "^16.9.44",
     "apollo-server-express": "^2.14.2",
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "classnames": "^2.2.6",
     "compression": "^1.7.4",
     "copyfiles": "^2.3.0",
