@@ -4,6 +4,7 @@ import { Key } from 'backend/_types/keys'
 import findIPAddress from '../../../_utils/findIPAddress'
 import { ObjectId } from 'mongodb'
 import { exec } from 'child_process'
+import genKey from '../../../_utils/genkey'
 
 const { Wg } = require('wireguard-wrapper')
 
@@ -12,10 +13,7 @@ export default async (_root: undefined, args: { deviceName: string }, context: C
     throw new AuthenticationError('Unable to retrieve access token')
   }
 
-  const interfaces = await Wg.show('wg0')
-
-  const privateKey = await Wg.genkey()
-  const publicKey = await Wg.pubkey(privateKey)
+  const { privateKey, publicKey } = genKey()
 
   const user = await context.database.users.findOne({
     email: context.currentUserEmail
@@ -60,6 +58,8 @@ export default async (_root: undefined, args: { deviceName: string }, context: C
   }
 
   exec(`wg set wg0 peer ${publicKey} allowed-ips ${ip}`)
+
+  const interfaces = await Wg.show('wg0')
 
   const config = `
     [Interface]
