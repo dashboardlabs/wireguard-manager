@@ -4,7 +4,7 @@ import { Key } from 'backend/_types/keys'
 import findIPAddress from '../../../_utils/findIPAddress'
 import { ObjectId } from 'mongodb'
 import { exec } from 'child_process'
-import genKey from '../../../_utils/genkey'
+import genKey from '../../../_utils/genKey'
 
 const { Wg } = require('wireguard-wrapper')
 
