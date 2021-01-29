@@ -1,0 +1,176 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wireguard-manager-config
+  namespace: wireguard-manager
+data:
+  cf_access_uri: 'https://<domain>.cloudflareaccess.com' # TODO: Edit me!!!
+  db_uri: 'mongodb://<mongodb_server>' # TODO: Edit me!!!
+  wireguard_start_ip: 10.69.0.0
+  allowed_ips: '0.0.0.0/0, ::/0'
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: wireguard-manager-nginx-ingress
+  namespace: wireguard-manager
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+  - hosts:
+    - your.domain # TODO: Edit me!!!
+    secretName: wireguard-manager-tls
+  rules:
+  - host: your.domain # TODO: Edit me!!!
+    http:
+      paths:
+      - backend:
+          serviceName: wireguard-manager-web
+          servicePort: 80
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    # Email address used for ACME registration
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      # Name of a secret used to store the ACME account private key
+      name: letsencrypt-prod-private-key
+    # Add a single challenge solver, HTTP01 using nginx
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: wireguard-manager-service-account
+  namespace: wireguard-manager
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: read-services
+rules:
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["get", "watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-services
+  namespace: wireguard-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: read-services
+subjects:
+- kind: ServiceAccount
+  name: wireguard-manager-service-account
+  namespace: wireguard-manager
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wireguard-manager-web
+  namespace: wireguard-manager
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  selector:
+    app: wireguard-manager
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wireguard-manager-vpn
+  namespace: wireguard-manager
+spec:
+  type: LoadBalancer
+  ports:
+  - name: wireguard
+    port: 51820
+    targetPort: 51820
+    protocol: UDP
+  selector:
+    app: wireguard-manager
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wireguard-claim
+  namespace: wireguard-manager
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: wireguard-manager
+  namespace: wireguard-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wireguard-manager
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: wireguard-manager
+        version: v1
+    spec:
+      serviceAccount: wireguard-manager-service-account
+      volumes:
+        - name: wireguard-claim
+          persistentVolumeClaim:
+            claimName: wireguard-claim
+      containers:
+        - name: app
+          image: dashlabsai/wireguard-manager
+          securityContext:
+            capabilities:
+              add: ["NET_ADMIN", "SYS_MODULE"]
+          env:
+            - name: CF_ACCESS_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: wireguard-manager-config
+                  key: cf_access_uri
+            - name: DB_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: wireguard-manager-config
+                  key: db_uri
+            - name: WIREGUARD_START_IP
+              valueFrom:
+                configMapKeyRef:
+                  name: wireguard-manager-config
+                  key: wireguard_start_ip
+            - name: ALLOWED_IPS
+              valueFrom:
+                configMapKeyRef:
+                  name: wireguard-manager-config
+                  key: allowed_ips
+          resources: {}
+          volumeMounts:
+            - name: wireguard-claim
+              mountPath: /etc/wireguard
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30

@@ -2,6 +2,8 @@
 
 A simple WireGuard VPN Manager to generate, assign, and manage profiles to users.
 
+[![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/dashlabsai/wireguard-manager?style=flat-square)](https://hub.docker.com/r/dashlabsai/wireguard-manager)
+
 <img src="https://github.com/dashboardlabs/wireguard-manager/blob/main/docs/img/screen.png?raw=true" /> 
 
 ## Requirements
@@ -9,7 +11,52 @@ A simple WireGuard VPN Manager to generate, assign, and manage profiles to users
 - Cloudflare Access
 - NodeJS 14 (LTS)
 - MongoDB Database (Does not need to be hosted in same server)
-- A WireGuard Server Installation (tested in Ubuntu 20.04 LTS)
+- One of the following:
+  - A WireGuard Server Installation (tested in Ubuntu 20.04 LTS)
+  - A Kubernetes Cluster
+
+## Kubernetes Cluster
+
+### Compatibility List:
+- ✅ Google Kubernetes Engine (Node Pool must be using an Ubuntu OS)
+- ✅ Azure Kubernetes Service
+- ⚠️ Amazon Elastic Kubernetes Service (not tested)
+- ❌ DigitalOcean Kubernetes Service (No UDP LoadBalancer support)
+
+### Installation Instructions:
+
+1. Edit the `k8s/manifest.yaml` file. Fields that need to be edited will be commented with `TODO: Edit me!!!`.
+2. Ensure that your `kubectl` context is set to the correct cluster.
+3. If you don't have an nginx ingress installed, please install it using: 
+
+```
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install ingress-nginx ingress-nginx/ingress-nginx
+```
+
+Use `kubectl get service ingress-nginx-controller` to obtain the External IP of the Nginx Ingress and ensure that your domain points to that IP address.
+
+Note: The Nginx Ingress IP address and the VPN IP address will be different.
+
+Enable Lets Encrypt SSL by running the following commands:
+```
+kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.14.1/cert-manager.crds.yaml
+kubectl create namespace cert-manager
+helm repo add jetstack https://charts.jetstack.io
+helm install cert-manager --version v0.14.1 --namespace cert-manager jetstack/cert-manager
+```
+
+4. Run the following commands: 
+
+```
+kubectl create namespace wireguard-manager
+kubectl apply -f k8s/manifest.yaml
+```
+
+The Docker Image should automatically generate a wireguard configuration file and should get a external IP address for you.
+
+The DNS Server is set to use the Kubernetes' built-in DNS server so users may connect to services within the Kubernetes Cluster through using the format: `my-svc.my-namespace.svc.cluster.local`
 
 ## Notes for WireGuard Installation
 
