@@ -58,6 +58,23 @@ The Docker Image should automatically generate a wireguard configuration file an
 
 The DNS Server is set to use the Kubernetes' built-in DNS server so users may connect to services within the Kubernetes Cluster through using the format: `my-svc.my-namespace.svc.cluster.local`
 
+## Running on Docker
+
+```
+docker run \
+ --cap-add net_admin \
+ --cap-add sys_module \
+ -p 8080:8080 \
+ -p 51820:51820/udp \
+ -e CF_ACCESS_URI='https://yourdomain.cloudflareaccess.com' \
+ -e DB_URI='mongodb://<your_mongodb_server>' \
+ -e WIREGUARD_START_IP='10.69.0.0' \
+ -e WIREGUARD_ENDPOINT='your.host:51820' \
+ -e ALLOWED_IPS='0.0.0.0/0, ::/0' \
+ -v <please specify a folder here to store the WireGuard config>:/etc/wireguard \
+ dashlabsai/wireguard-manager
+```
+
 ## Notes for WireGuard Installation
 
 When configuring your WireGuard Installation, ensure that the `SaveConfig = true` option is enabled in your WireGuard Interface. An example of what your configuration file should look like is as shown:
