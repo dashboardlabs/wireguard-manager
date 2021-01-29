@@ -2,7 +2,7 @@ import { AuthenticationError, ForbiddenError } from 'apollo-server-express'
 import { Context } from 'backend/_types/context'
 import { Key } from 'backend/_types/keys'
 import { ObjectId } from 'mongodb'
-import { exec } from 'child_process'
+import execa from 'execa'
 
 export default async (_root: undefined, args: { _id: string }, context: Context): Promise<Key> => {
   if (!context.currentUserEmail) {
@@ -21,7 +21,9 @@ export default async (_root: undefined, args: { _id: string }, context: Context)
     throw new ForbiddenError('Access Denied')
   }
 
-  exec(`wg set wg0 peer ${key.publicKey} remove`)
+  await execa.command(`wg set wg0 peer ${key.publicKey} remove`)
+  await execa.command('wg-quick down wg0')
+  await execa.command('wg-quick up wg0')
 
   await context.database.users.findOneAndUpdate(
     {

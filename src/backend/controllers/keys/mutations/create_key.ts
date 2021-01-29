@@ -3,9 +3,9 @@ import { Context } from 'backend/_types/context'
 import { Key } from 'backend/_types/keys'
 import findIPAddress from '../../../_utils/findIPAddress'
 import { ObjectId } from 'mongodb'
-import { exec } from 'child_process'
 import genKey from '../../../_utils/genKey'
 import getPublicIPAddressKube from '../../../_utils/getPublicIPAddressKube'
+import execa from 'execa'
 
 const { Wg } = require('wireguard-wrapper')
 
@@ -58,7 +58,9 @@ export default async (_root: undefined, args: { deviceName: string }, context: C
     })
   }
 
-  exec(`wg set wg0 peer ${publicKey} allowed-ips ${ip}`)
+  await execa.command(`wg set wg0 peer ${publicKey} allowed-ips ${ip}`)
+  await execa.command('wg-quick down wg0')
+  await execa.command('wg-quick up wg0')
 
   const interfaces = await Wg.show('wg0')
 
