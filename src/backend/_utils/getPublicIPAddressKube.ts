@@ -3,7 +3,7 @@ import fs from 'fs'
 import https from 'https'
 
 const agent = new https.Agent({
-  ca: fs.readFileSync('/var/run/secrets/kubernetes.io/serviceaccount/ca.crt')
+  ca: process.env.KUBERNETES_SERVICE_HOST ? fs.readFileSync('/var/run/secrets/kubernetes.io/serviceaccount/ca.crt') : null
 })
 
 const getPublicIPAddressKube = async (): Promise<string> => {
