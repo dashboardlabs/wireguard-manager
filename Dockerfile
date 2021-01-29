@@ -7,6 +7,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 COPY . .
+RUN chmod 755 ./server.sh
 
 RUN npm run build
 RUN npm prune --production
