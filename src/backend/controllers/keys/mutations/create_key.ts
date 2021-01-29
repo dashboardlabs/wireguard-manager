@@ -5,6 +5,7 @@ import findIPAddress from '../../../_utils/findIPAddress'
 import { ObjectId } from 'mongodb'
 import { exec } from 'child_process'
 import genKey from '../../../_utils/genKey'
+import getPublicIPAddressKube from '../../../_utils/getPublicIPAddressKube'
 
 const { Wg } = require('wireguard-wrapper')
 
@@ -61,16 +62,24 @@ export default async (_root: undefined, args: { deviceName: string }, context: C
 
   const interfaces = await Wg.show('wg0')
 
+  let dns = ''
+  if (process.env.KUBERNETES_SERVICE_HOST) {
+    dns = `DNS = ${process.env.KUBERNETES_SERVICE_HOST}0`
+  } else if (!process.env.ALLOWED_IPS || process.env.ALLOWED_IPS === '0.0.0.0/0, ::/0') {
+    dns = 'DNS = 1.1.1.2, 1.0.0.2, 2606:4700:4700::1112, 2606:4700:4700::1002'
+  }
+  const endpoint = process.env.WIREGUARD_ENDPOINT ? process.env.WIREGUARD_ENDPOINT : `${await getPublicIPAddressKube()}:51820`
+
   const config = `
     [Interface]
     Address = ${ip}
-    ${(!process.env.ALLOWED_IPS || process.env.ALLOWED_IPS === '0.0.0.0/0, ::/0') ? 'DNS = 1.1.1.2, 1.0.0.2, 2606:4700:4700::1112, 2606:4700:4700::1002' : ''}
+    ${dns}
     PrivateKey = ${privateKey}
     
     [Peer]
     PublicKey = ${interfaces.wg0._publicKey}
     AllowedIPs = ${process.env.ALLOWED_IPS ? process.env.ALLOWED_IPS : '0.0.0.0/0, ::/0'}
-    Endpoint = ${process.env.WIREGUARD_ENDPOINT}
+    Endpoint = ${endpoint}
   `
 
   const key = await context.database.keys.findOne({
