@@ -65,15 +65,20 @@ nextJSApp.prepare().then(async () => {
     keys: db.collection<Key>('keys')
   }
 
-  database.users.dropIndexes()
-  database.keys.dropIndexes()
+  try {
+    await database.users.dropIndexes()
+    await database.keys.dropIndexes()
+  } catch {
+    await db.createCollection('users')
+    await db.createCollection('keys')
+  }
 
-  database.users.createIndex({
+  await database.users.createIndex({
     email: 'text',
     unique: 1
   })
 
-  database.keys.createIndex({
+  await database.keys.createIndex({
     userId: 1
   })
 
