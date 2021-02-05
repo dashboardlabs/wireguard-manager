@@ -1,0 +1,10 @@
+{
+	"name": "Docker",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+	"settings": { 
+		"terminal.integrated.shell.linux": null
+	},
+	"forwardPorts": [3000, 27017, 51820]
+}
