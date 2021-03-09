@@ -10,7 +10,6 @@ A simple WireGuard VPN Manager to generate, assign, and manage profiles to users
 
 - Cloudflare Access
 - NodeJS 14 (LTS)
-- MongoDB Database (Does not need to be hosted in same server)
 - One of the following:
   - A WireGuard Server Installation (tested in Ubuntu 20.04 LTS)
   - A Kubernetes Cluster
@@ -47,10 +46,9 @@ helm repo add jetstack https://charts.jetstack.io
 helm install cert-manager --version v0.14.1 --namespace cert-manager jetstack/cert-manager
 ```
 
-4. Run the following commands: 
+4. Run the command: 
 
-```
-kubectl create namespace wireguard-manager
+```bash
 kubectl apply -f k8s/manifest.yaml
 ```
 

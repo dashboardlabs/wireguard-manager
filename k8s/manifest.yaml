@@ -1,3 +1,7 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: wireguard-manager
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -6,7 +10,6 @@ metadata:
   namespace: wireguard-manager
 data:
   cf_access_uri: 'https://<domain>.cloudflareaccess.com' # TODO: Edit me!!!
-  db_uri: 'mongodb://<mongodb_server>' # TODO: Edit me!!!
   wireguard_start_ip: 10.69.0.0
   allowed_ips: '0.0.0.0/0, ::/0'
 ---
@@ -118,6 +121,18 @@ spec:
     requests:
       storage: 1Gi
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodb-data
+  namespace: wireguard-manager
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
@@ -140,6 +155,9 @@ spec:
         - name: wireguard-claim
           persistentVolumeClaim:
             claimName: wireguard-claim
+        - name: mongodb-data
+          persistentVolumeClaim:
+            claimName: mongodb-data
       containers:
         - name: app
           image: dashlabsai/wireguard-manager
@@ -152,11 +170,6 @@ spec:
                 configMapKeyRef:
                   name: wireguard-manager-config
                   key: cf_access_uri
-            - name: DB_URI
-              valueFrom:
-                configMapKeyRef:
-                  name: wireguard-manager-config
-                  key: db_uri
             - name: WIREGUARD_START_IP
               valueFrom:
                 configMapKeyRef:
@@ -167,10 +180,24 @@ spec:
                 configMapKeyRef:
                   name: wireguard-manager-config
                   key: allowed_ips
-          resources: {}
+          resources:
+            limits:
+              cpu: '50m'
+              memory: '100Mi'
           volumeMounts:
             - name: wireguard-claim
               mountPath: /etc/wireguard
           imagePullPolicy: Always
+        - name: db
+          image: mongo
+          ports:
+          - containerPort: 27017
+          volumeMounts:
+            - name: mongodb-data
+              mountPath: /data/db
+          resources:
+            limits:
+              cpu: '50m'
+              memory: '100Mi'
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
