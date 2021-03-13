@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --exec ts-node src/index.ts",
-    "build": "rm -rf dist && next build src/frontend && tsc --build tsconfig.json && copyfiles -u 1 **/*.graphql dist && copyfiles -u 1 **/*.pdf dist && copyfiles -u 1 **/*.ttf dist && copyfiles -u 1 **/*.png dist",
+    "build": "rm -rf dist && next build src/frontend && tsc --build tsconfig.json && copyfiles -u 1 **/*.graphql dist",
     "start": "NODE_ENV=production node dist/index.js",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix && prettier --write ."
   },
@@ -21,24 +21,25 @@
   },
   "homepage": "https://github.com/phillytan/wireguard-manager#readme",
   "devDependencies": {
+    "@types/classnames": "^2.2.10",
     "@types/compression": "^1.7.0",
     "@types/express": "^4.17.8",
     "@types/helmet": "^4.0.0",
+    "@types/js-cookie": "^2.2.6",
     "@types/js-md5": "^0.4.2",
     "@types/jsonwebtoken": "^8.5.0",
-    "@types/node": "^14.14.6",
-    "@types/classnames": "^2.2.10",
-    "@types/js-cookie": "^2.2.6",
     "@types/mongodb": "^3.5.32",
+    "@types/node": "^14.14.6",
     "@types/react": "^16.9.44",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
+    "copyfiles": "^2.4.1",
     "eslint": "^7.1.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-react": "^7.20.5",
-    "nodemon": "^2.0.4",
+    "nodemon": "^2.0.7",
     "prettier": "^2.1.2",
-    "ts-node": "^9.0.0"
+    "ts-node": "^9.1.1"
   },
   "dependencies": {
     "@apollo/client": "^3.2.5",
@@ -51,7 +52,6 @@
     "axios": "^0.21.1",
     "classnames": "^2.2.6",
     "compression": "^1.7.4",
-    "copyfiles": "^2.3.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "execa": "^5.0.0",
@@ -68,6 +68,6 @@
     "react-dom": "^17.0.1",
     "react-qr-svg": "^2.3.0",
     "typescript": "^4.0.5",
-    "wireguard-wrapper": "^1.0.2"
+    "wireguard-wrapper": "^1.0.3"
   }
 }
