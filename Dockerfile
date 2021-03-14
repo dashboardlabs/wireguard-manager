@@ -1,6 +1,7 @@
 FROM node:12-alpine
 
-RUN apk --no-cache add wireguard-tools iptables ip6tables inotify-tools
+RUN apk --no-cache add wireguard-tools iptables ip6tables inotify-tools tini
+RUN deluser --remove-home node
 
 WORKDIR /usr/src/app
 
