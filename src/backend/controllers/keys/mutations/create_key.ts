@@ -47,7 +47,7 @@ export default async (_root: undefined, args: { deviceName: string }, context: C
       }
     )
   } else {
-    const offset = await context.database.keys.count({})
+    const offset = await context.database.keys.countDocuments({})
     ip = findIPAddress(offset)
     await context.database.keys.insertOne({
       deviceName: args.deviceName,
