@@ -1,4 +1,4 @@
-FROM node:12-alpine
+FROM node:14-alpine
 
 RUN apk --no-cache add wireguard-tools iptables ip6tables inotify-tools tini
 RUN deluser --remove-home node
@@ -6,7 +6,7 @@ RUN deluser --remove-home node
 WORKDIR /usr/src/app
 
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 COPY . .
 RUN chmod 755 ./server.sh
 
