@@ -21,5 +21,5 @@ export default async (_root: undefined, _args: null, context: Context): Promise<
     keys: []
   })
 
-  return response.ops[0]
+  return await context.database.users.findOne({ _id: response.insertedId })
 }
